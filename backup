@@ -1,0 +1,65 @@
+#!/usr/bin/bash
+
+root_dir="/var/home/valyakuttan/.var/app/net.mullvad.MullvadBrowser/.mullvad/mullvadbrowser/5z7hajoq.default-release"
+bookmarks="${root_dir}/places.sqlite"
+
+# tmp variables
+tmp="$(mktemp -d)"
+last_backup="${tmp}/places.sqlite"
+
+# data variables
+backup_location="data"
+backup_file="${backup_location}/places.asc"
+
+# git variables
+git_remote="origin"
+git_branch="main"
+
+# commit message
+# put current date as yyyy-mm-dd HH:MM:SS in $date
+printf -v current_date '%(%Y-%m-%d %H:%M:%S)T' -1
+commit_message="backup of ${current_date}"
+
+echo "Enter passphrase to encrypt backup: "
+read passphrase
+
+if [ -f "${backup_file}" ]; then
+  gpg --yes --batch --pinentry-mode=loopback --passphrase="${passphrase}" --output "${last_backup}" -d "${backup_file}"
+fi
+
+# make sure backup_location exists
+mkdir -p "${backup_location}"
+
+if [ -f "${last_backup}" ]; then
+  sqlite_diff="$(diff "${last_backup}" "${bookmarks}")"
+  git_status="$(git status --porcelain)"
+
+  if [ "${sqlite_diff}" != "" ] || [ "${git_status}" != "" ]; then
+    # encrypt file
+    gpg --yes --batch --pinentry-mode=loopback --passphrase="${passphrase}" --output "${backup_file}" --armor -c --s2k-cipher-algo AES256 "${bookmarks}"
+
+    # commit changes
+    git add .
+    git status
+    git commit -m "${commit_message}"
+    git push "${git_remote}" "${git_remote}"
+
+    echo "${commit_message} completed"
+  else
+    echo "The bookmarks not modified."
+  fi
+else
+  # encrypt file
+  gpg --yes --batch --pinentry-mode=loopback --passphrase="${passphrase}" --output "${backup_file}" --armor -c --s2k-cipher-algo AES256 "${bookmarks}"
+
+  # commit changes
+  git add .
+  git status
+  git commit -m "${commit_message}"
+  git push "${git_remote}" "${git_remote}"
+
+  echo "${commit_message} completed"
+fi
+
+# cleanup tmp
+rm -rf "${tmp}"
