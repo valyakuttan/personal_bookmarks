@@ -63,7 +63,7 @@ if [[ -f "${backup_file}" ]]; then
     encrypt_backup "${passphrase}" "${backup_file}" "${bookmarks}"
     save_changes "${commit_message}" "${git_remote}" "${git_branch}"
   else
-    echo "The bookmarks not modified."
+    echo "Nothing to backup"
   fi
 else
   encrypt_backup "${passphrase}" "${backup_file}" "${bookmarks}"
