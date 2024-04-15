@@ -1,6 +1,18 @@
 #!/usr/bin/bash
 
-root_dir="/var/home/valyakuttan/.var/app/net.mullvad.MullvadBrowser/.mullvad/mullvadbrowser/5z7hajoq.default-release"
+# passphrase
+#read -s -p "passphrase to encrypt backup: " passphrase
+
+# passphrase
+#read -s -p "Bookmarks root directory: " root_dir
+
+passphrase="$1"
+root_dir="$2"
+printf "passphrase = %s\n" "$passphrase"
+printf "root_dir = %s\n" "$root_dir"
+
+
+#root_dir="/var/home/valyakuttan/.var/app/net.mullvad.MullvadBrowser/.mullvad/mullvadbrowser/ntppsk43.default-release"
 bookmarks="${root_dir}/places.sqlite"
 
 # tmp variables
@@ -19,8 +31,6 @@ git_branch="main"
 printf -v current_date '%(%Y-%m-%d %H:%M:%S)T' -1
 commit_message="backup of ${current_date}"
 
-# passphrase
-read -s -p "passphrase to encrypt backup: " passphrase
 
 function retrieve_backup() {
   local passphrase="$1"
