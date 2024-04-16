@@ -37,7 +37,7 @@ function backup_bookmarks() {
   local git_remote="$5"
   local git_branch="$6"
 
-  local backup_location="$(dirname '${backup_file}')"
+  local backup_location="$(dirname "${backup_file}")"
 
   #printf "backup_location = %s\n backup_file = %s\n passphrase = %s\n bookmarks = %s\n ommit_message = %s\n git_remote = %s\n git_branch = %s\n" "${backup_location}" "${backup_file}" "${passphrase}" "${bookmarks}" "${commit_message}" "${git_remote}" "${git_branch}"
   #exit 0
@@ -51,7 +51,7 @@ function backup_bookmarks() {
 
   if [[ -f "${backup_file}" ]]; then
     retrieve_backup "${passphrase}" "${last_backup}" "${backup_file}"
-    sqlite_diff="$(diff '${last_backup}' '${bookmarks}')"
+    sqlite_diff="$(diff "${last_backup}" "${bookmarks}")"
     git_status="$(git status --porcelain)"
 
     if [[ -n "${sqlite_diff}" ]] || [[ -n "${git_status}" ]]; then
@@ -124,7 +124,7 @@ case "${command}" in
     ;;
 
   *)
-    error "Unknowm command '${command}'"
+    error "Unknowm command ${command}"
     ;;
 
 esac
