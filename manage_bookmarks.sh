@@ -116,12 +116,10 @@ commit_message="backup of ${current_date}"
 
 case "${command}" in
   backup)
-    echo -n "backup"
     backup_bookmarks "${backup_file}" "${passphrase}" "${bookmarks}" "${commit_message}" "${git_remote}" "${git_branch}"
     ;;
 
   restore)
-    echo -n "restore"
     restore_bookmarks "${backup_file}" "${passphrase}" "${bookmarks}"
     ;;
 
